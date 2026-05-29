@@ -3,14 +3,34 @@ import {
   IconPlus, IconTrash, IconCircle, IconSparkle, IconRefresh
 } from './icons/index.jsx';
 import { CategoryBadge } from './TriageScreen.jsx';
-import ColorMix, { deriveAccentTokens } from './ColorMix.jsx';
-
-const DEFAULT_MIX = ['#6366F1', '#8B5CF6'];
+import ColorMix from './ColorMix.jsx';
+import { DEFAULTS as APPEARANCE_DEFAULTS, applyAppearance, saveAppearance, loadAppearance } from './appearance.js';
 
 const CATEGORIES = {
   newsletter: 'Newsletter', spam: 'Spam', important: 'Important',
   receipt: 'Receipt', other: 'Other',
 };
+
+function SegmentRow({ label, hint, value, options, onChange }) {
+  return (
+    <div>
+      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#71717A', marginBottom: 8 }}>{label}</div>
+      <div style={{ display: 'inline-flex', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 6, padding: 3, background: '#161618' }}>
+        {options.map(o => {
+          const active = value === o.id;
+          return (
+            <button key={o.id} type="button" onClick={() => onChange(o.id)} style={{
+              padding: '5px 14px', fontSize: 12, fontWeight: 500,
+              background: active ? '#27272A' : 'transparent', border: 'none', borderRadius: 4,
+              color: active ? '#E4E4E7' : '#A1A1AA',
+            }}>{o.label}</button>
+          );
+        })}
+      </div>
+      {hint && <div style={{ fontSize: 11.5, color: '#71717A', marginTop: 8 }}>{hint}</div>}
+    </div>
+  );
+}
 
 function Section({ title, subtitle, children }) {
   return (
@@ -72,7 +92,7 @@ export default function SettingsScreen({ onAddAccount }) {
   const [newTplBody, setNewTplBody] = useState('');
   const [dbInfo, setDbInfo] = useState(null);
   const [syncErrors, setSyncErrors] = useState({});
-  const [accentMix, setAccentMix] = useState(DEFAULT_MIX);
+  const [appearance, setAppearance] = useState(APPEARANCE_DEFAULTS);
 
   useEffect(() => {
     Promise.all([
@@ -83,8 +103,8 @@ export default function SettingsScreen({ onAddAccount }) {
       window.api.templates.list(),
       window.api.settings.getDbInfo(),
       window.api.accounts.getSyncErrors(),
-      window.api.settings.getAccentMix(),
-    ]).then(([accts, rls, freq, key, tmpls, info, errs, mix]) => {
+      loadAppearance(),
+    ]).then(([accts, rls, freq, key, tmpls, info, errs, appr]) => {
       setAccounts(accts);
       setRules(rls);
       setSyncFreq(freq);
@@ -92,7 +112,7 @@ export default function SettingsScreen({ onAddAccount }) {
       setTemplates(tmpls);
       setDbInfo(info);
       setSyncErrors(errs || {});
-      setAccentMix(mix || DEFAULT_MIX);
+      setAppearance(appr);
     }).catch(console.error);
   }, []);
 
@@ -147,9 +167,12 @@ export default function SettingsScreen({ onAddAccount }) {
     setTimeout(() => setDeeplSaved(false), 2000);
   };
 
-  const handleAccentMix = async (mix) => {
-    setAccentMix(mix);
-    await window.api.settings.setAccentMix(mix);
+  const updateAppearance = async (patch) => {
+    const next = { ...appearance, ...patch };
+    setAppearance(next);
+    applyAppearance(next);
+    window.dispatchEvent(new CustomEvent('appearance:change', { detail: next }));
+    await saveAppearance(patch);
   };
 
   return (
@@ -259,8 +282,8 @@ export default function SettingsScreen({ onAddAccount }) {
                 <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                   <button onClick={addRule} disabled={!newRulePattern.trim()} style={{
                     padding: '4px 10px', fontSize: 11.5,
-                    background: newRulePattern.trim() ? '#6366F1' : '#27272A',
-                    border: '1px solid ' + (newRulePattern.trim() ? '#6366F1' : '#3F3F46'),
+                    background: newRulePattern.trim() ? 'var(--accent-gradient)' : '#27272A',
+                    border: '1px solid ' + (newRulePattern.trim() ? 'var(--accent)' : '#3F3F46'),
                     borderRadius: 4,
                     color: newRulePattern.trim() ? '#fff' : '#52525B',
                     fontWeight: 500,
@@ -309,8 +332,8 @@ export default function SettingsScreen({ onAddAccount }) {
                 </button>
                 <button onClick={handleSaveDeeplKey} style={{
                   padding: '4px 12px', fontSize: 12,
-                  background: deeplSaved ? '#22C55E' : '#6366F1',
-                  border: '1px solid ' + (deeplSaved ? '#22C55E' : '#6366F1'),
+                  background: deeplSaved ? '#22C55E' : 'var(--accent-gradient)',
+                  border: '1px solid ' + (deeplSaved ? '#22C55E' : 'var(--accent)'),
                   borderRadius: 4, color: '#fff', fontWeight: 500,
                 }}>{deeplSaved ? 'Saved!' : 'Save'}</button>
               </div>
@@ -356,8 +379,8 @@ export default function SettingsScreen({ onAddAccount }) {
                     disabled={!newTplName.trim() || !newTplBody.trim()}
                     style={{
                       padding: '6px 10px', fontSize: 11.5,
-                      background: (newTplName.trim() && newTplBody.trim()) ? '#6366F1' : '#27272A',
-                      border: '1px solid ' + ((newTplName.trim() && newTplBody.trim()) ? '#6366F1' : '#3F3F46'),
+                      background: (newTplName.trim() && newTplBody.trim()) ? 'var(--accent-gradient)' : '#27272A',
+                      border: '1px solid ' + ((newTplName.trim() && newTplBody.trim()) ? 'var(--accent)' : '#3F3F46'),
                       borderRadius: 4,
                       color: (newTplName.trim() && newTplBody.trim()) ? '#fff' : '#52525B',
                       fontWeight: 500, alignSelf: 'flex-start',
@@ -369,13 +392,37 @@ export default function SettingsScreen({ onAddAccount }) {
           </Section>
 
           {/* Appearance */}
-          <Section title="Appearance" subtitle="Pick an accent color or blend multiple colors into a gradient used throughout the app.">
-            <div style={{ border: '1px solid #27272A', borderRadius: 6, background: '#18181B', padding: 16 }}>
+          <Section title="Appearance" subtitle="Customize the accent color, density and feel of the app.">
+            <div style={{ border: '1px solid #27272A', borderRadius: 6, background: '#18181B', padding: 16, display: 'flex', flexDirection: 'column', gap: 20 }}>
               <ColorMix
-                value={accentMix}
-                onChange={handleAccentMix}
-                onReset={() => handleAccentMix(DEFAULT_MIX)}
+                value={appearance.accentMix}
+                onChange={(mix) => updateAppearance({ accentMix: mix })}
+                onReset={() => updateAppearance({ accentMix: APPEARANCE_DEFAULTS.accentMix })}
                 ui={{ bg: '#18181B', text: '#E4E4E7', muted: '#71717A', border: 'rgba(255,255,255,0.08)' }}
+              />
+
+              <SegmentRow
+                label="Density"
+                hint="How tight the email rows and navigation should be."
+                value={appearance.density}
+                options={[{ id: 'comfortable', label: 'Comfortable' }, { id: 'compact', label: 'Compact' }]}
+                onChange={(v) => updateAppearance({ density: v })}
+              />
+
+              <SegmentRow
+                label="Font size"
+                hint="Scale the entire interface up or down."
+                value={appearance.fontSize}
+                options={[{ id: 'small', label: 'Small' }, { id: 'medium', label: 'Medium' }, { id: 'large', label: 'Large' }]}
+                onChange={(v) => updateAppearance({ fontSize: v })}
+              />
+
+              <SegmentRow
+                label="Background"
+                hint="Solid dark, or a subtle gradient tinted with the accent colors."
+                value={appearance.bgStyle}
+                options={[{ id: 'solid', label: 'Solid' }, { id: 'gradient', label: 'Gradient' }]}
+                onChange={(v) => updateAppearance({ bgStyle: v })}
               />
             </div>
           </Section>

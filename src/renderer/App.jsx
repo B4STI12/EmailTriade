@@ -7,6 +7,7 @@ import ComposeModal from './ComposeModal.jsx';
 import SearchResultsScreen from './SearchResultsScreen.jsx';
 import SettingsScreen from './SettingsScreen.jsx';
 import QuickCleanModal from './QuickCleanModal.jsx';
+import { loadAppearance, applyAppearance } from './appearance.js';
 
 function formatDate(ts) {
   if (!ts) return '';
@@ -37,7 +38,7 @@ function EmailListScreen({ title, loader, openEmailId, setOpenEmailId }) {
         {!loading && (
           <span style={{
             fontSize: 11, fontWeight: 500, padding: '2px 7px', borderRadius: 4,
-            background: 'rgba(99,102,241,0.14)', color: '#A5A8F4',
+            background: 'var(--accent-soft-strong)', color: 'var(--accent-text)',
             fontVariantNumeric: 'tabular-nums',
           }}>{emails.length}</span>
         )}
@@ -52,8 +53,8 @@ function EmailListScreen({ title, loader, openEmailId, setOpenEmailId }) {
             <div key={e.id} onClick={() => setOpenEmailId(e.id)} style={{
               display: 'grid', gridTemplateColumns: '1fr auto',
               gap: 12, padding: '11px 16px', borderBottom: '1px solid #1F1F22',
-              borderLeft: openEmailId === e.id ? '2px solid #6366F1' : '2px solid transparent',
-              background: openEmailId === e.id ? 'rgba(99,102,241,0.10)' : 'transparent',
+              borderLeft: openEmailId === e.id ? '2px solid var(--accent)' : '2px solid transparent',
+              background: openEmailId === e.id ? 'var(--accent-soft)' : 'transparent',
               cursor: 'pointer',
             }}>
               <div style={{ minWidth: 0 }}>
@@ -124,6 +125,10 @@ export default function App() {
   useEffect(() => {
     refreshAccounts();
     refreshTemplates();
+    loadAppearance().then(applyAppearance);
+    const onChange = (e) => applyAppearance(e.detail);
+    window.addEventListener('appearance:change', onChange);
+    return () => window.removeEventListener('appearance:change', onChange);
   }, []);
 
   useEffect(() => {

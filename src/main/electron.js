@@ -527,6 +527,15 @@ ipcMain.handle('settings:setAccentMix', (_, mix) => {
   getStore().set('settings.accentMix', mix);
 });
 
+ipcMain.handle('settings:getDensity', () => getStore().get('settings.density', 'comfortable'));
+ipcMain.handle('settings:setDensity', (_, v) => getStore().set('settings.density', v));
+
+ipcMain.handle('settings:getFontSize', () => getStore().get('settings.fontSize', 'medium'));
+ipcMain.handle('settings:setFontSize', (_, v) => getStore().set('settings.fontSize', v));
+
+ipcMain.handle('settings:getBgStyle', () => getStore().get('settings.bgStyle', 'solid'));
+ipcMain.handle('settings:setBgStyle', (_, v) => getStore().set('settings.bgStyle', v));
+
 ipcMain.handle('settings:getDbInfo', () => {
   const db = getDb();
   const pageCount = db.pragma('page_count')[0]?.page_count || 0;

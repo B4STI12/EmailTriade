@@ -8,14 +8,41 @@
   --text: #E4E4E7;
   --text-secondary: #A1A1AA;
   --text-muted: #71717A;
+
+  /* Accent tokens — overridden at runtime from accentMix in Settings > Appearance */
   --accent: #6366F1;
-  --accent-soft: rgba(99,102,241,0.12);
-  --accent-soft-strong: rgba(99,102,241,0.18);
+  --accent-gradient: linear-gradient(135deg, #6366F1, #8B5CF6);
+  --accent-soft: rgba(99,102,241,0.10);
+  --accent-soft-strong: rgba(99,102,241,0.16);
+  --accent-border: rgba(99,102,241,0.28);
+  --accent-text: #A5A8F4;
+
+  /* Density — overridden when data-density="compact" */
+  --row-pad-y: 11px;
+  --row-pad-x: 16px;
+
+  /* Font size — applied only to the main content via main { zoom } below */
+  --ui-zoom: 1;
+
   --cat-newsletter: #F59E0B;
   --cat-spam:       #EF4444;
   --cat-important:  #3B82F6;
   --cat-receipt:    #22C55E;
   --cat-other:      #71717A;
+}
+
+html[data-density="compact"] {
+  --row-pad-y: 7px;
+  --row-pad-x: 12px;
+}
+
+main { zoom: var(--ui-zoom); }
+
+html[data-bg="gradient"] body {
+  background:
+    radial-gradient(circle at 0% 0%, var(--accent-soft) 0%, transparent 45%),
+    radial-gradient(circle at 100% 100%, var(--accent-soft) 0%, transparent 45%),
+    var(--bg);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }

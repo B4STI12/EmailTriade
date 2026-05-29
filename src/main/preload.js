@@ -55,6 +55,12 @@ contextBridge.exposeInMainWorld('api', {
     getDbInfo: () => ipcRenderer.invoke('settings:getDbInfo'),
     getAccentMix: () => ipcRenderer.invoke('settings:getAccentMix'),
     setAccentMix: (mix) => ipcRenderer.invoke('settings:setAccentMix', mix),
+    getDensity: () => ipcRenderer.invoke('settings:getDensity'),
+    setDensity: (v) => ipcRenderer.invoke('settings:setDensity', v),
+    getFontSize: () => ipcRenderer.invoke('settings:getFontSize'),
+    setFontSize: (v) => ipcRenderer.invoke('settings:setFontSize', v),
+    getBgStyle: () => ipcRenderer.invoke('settings:getBgStyle'),
+    setBgStyle: (v) => ipcRenderer.invoke('settings:setBgStyle', v),
   },
   events: {
     onSyncTick: (cb) => {

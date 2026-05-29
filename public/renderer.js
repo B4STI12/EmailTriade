@@ -7378,9 +7378,9 @@
           width: 32,
           height: 32,
           borderRadius: 5,
-          background: active ? "rgba(99,102,241,0.14)" : h ? "#1A1A1E" : "transparent",
+          background: active ? "var(--accent-soft-strong)" : h ? "#1A1A1E" : "transparent",
           border: "none",
-          color: active ? "#C7C9FF" : h ? "#E4E4E7" : "#71717A",
+          color: active ? "var(--accent-text)" : h ? "#E4E4E7" : "#71717A",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -7394,7 +7394,7 @@
             bottom: 6,
             width: 2,
             borderRadius: 1,
-            background: "#6366F1"
+            background: "var(--accent-gradient)"
           } }),
           icon
         ]
@@ -7417,7 +7417,7 @@
         width: 28,
         height: 28,
         borderRadius: 6,
-        background: "#6366F1",
+        background: "var(--accent-gradient)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -7437,9 +7437,9 @@
         width: 28,
         height: 28,
         borderRadius: 6,
-        background: "rgba(99,102,241,0.14)",
-        border: "1px solid rgba(99,102,241,0.28)",
-        color: "#A5A8F4",
+        background: "var(--accent-soft-strong)",
+        border: "1px solid var(--accent-border)",
+        color: "var(--accent-text)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -7459,12 +7459,12 @@
                 width: 28,
                 height: 28,
                 borderRadius: "50%",
-                background: a.color || "#6366F1",
+                background: a.color || "var(--accent)",
                 color: "#fff",
                 fontSize: 12,
                 fontWeight: 600,
                 border: active ? "2px solid #fff" : "2px solid transparent",
-                outline: active ? "1px solid #6366F1" : "none",
+                outline: active ? "1px solid var(--accent)" : "none",
                 outlineOffset: 1,
                 display: "flex",
                 alignItems: "center",
@@ -7508,9 +7508,9 @@
             height: 32,
             borderRadius: 5,
             marginBottom: 6,
-            background: qcHover ? "rgba(99,102,241,0.14)" : "transparent",
+            background: qcHover ? "var(--accent-soft-strong)" : "transparent",
             border: "none",
-            color: qcHover ? "#C7C9FF" : "#71717A",
+            color: qcHover ? "var(--accent-text)" : "#71717A",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -7981,8 +7981,8 @@
     const [hovered, setHovered] = (0, import_react5.useState)(false);
     const isHover = hovered || snoozeOpen;
     const acct = accounts.find((a) => a.id === email.account_id) || {};
-    const bg = isOpen ? "rgba(99,102,241,0.10)" : selected ? "rgba(99,102,241,0.07)" : isHover ? "#1A1A1E" : "transparent";
-    const borderLeft = isOpen || selected ? "2px solid #6366F1" : "2px solid transparent";
+    const bg = isOpen ? "var(--accent-soft)" : selected ? "var(--accent-soft)" : isHover ? "#1A1A1E" : "transparent";
+    const borderLeft = isOpen || selected ? "2px solid var(--accent)" : "2px solid transparent";
     const initial = (acct.display_name || acct.email || "?")[0].toUpperCase();
     return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
       "div",
@@ -7998,7 +7998,7 @@
           gridTemplateColumns: "28px 16px 200px 1fr 80px auto",
           alignItems: "center",
           gap: 12,
-          padding: "11px 16px 11px 14px",
+          padding: "var(--row-pad-y) var(--row-pad-x) var(--row-pad-y) 14px",
           borderBottom: "1px solid #1F1F22",
           borderLeft,
           background: bg,
@@ -8019,21 +8019,21 @@
                 width: 16,
                 height: 16,
                 borderRadius: 3,
-                border: selected ? "1px solid #6366F1" : "1px solid #52525B",
-                background: selected ? "#6366F1" : "transparent",
+                border: selected ? "1px solid var(--accent)" : "1px solid #52525B",
+                background: selected ? "var(--accent)" : "transparent",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center"
               }, children: selected && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(IconCheck, { size: 11, stroke: "#fff", strokeWidth: 2 }) })
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: { display: "flex", alignItems: "center", justifyContent: "center" }, children: !email.is_read && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(IconCircle, { size: 6, color: "#6366F1" }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: { display: "flex", alignItems: "center", justifyContent: "center" }, children: !email.is_read && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(IconCircle, { size: 6, color: "var(--accent)" }) }),
           /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 8, minWidth: 0 }, children: [
             /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { title: acct.email, style: {
               width: 16,
               height: 16,
               borderRadius: "50%",
-              background: acct.color || "#6366F1",
+              background: acct.color || "var(--accent)",
               color: "#fff",
               fontSize: 9,
               fontWeight: 600,
@@ -8145,8 +8145,8 @@
           fontWeight: 500,
           padding: "2px 7px",
           borderRadius: 4,
-          background: "rgba(99,102,241,0.14)",
-          color: "#A5A8F4",
+          background: "var(--accent-soft-strong)",
+          color: "var(--accent-text)",
           fontVariantNumeric: "tabular-nums"
         }, children: [
           unreadCount,
@@ -8160,9 +8160,9 @@
           fontSize: 12,
           fontWeight: 500,
           borderRadius: 4,
-          border: active ? "1px solid #6366F1" : "1px solid #27272A",
-          background: active ? "rgba(99,102,241,0.14)" : "transparent",
-          color: active ? "#C7C9FF" : "#A1A1AA",
+          border: active ? "1px solid var(--accent)" : "1px solid #27272A",
+          background: active ? "var(--accent-soft-strong)" : "transparent",
+          color: active ? "var(--accent-text)" : "#A1A1AA",
           transition: "all .1s"
         }, children: c.label }, c.id);
       }) }),
@@ -8241,8 +8241,8 @@
         fontSize: 12,
         fontWeight: 600,
         padding: "3px 8px",
-        background: "rgba(99,102,241,0.16)",
-        color: "#C7C9FF",
+        background: "var(--accent-soft-strong)",
+        color: "var(--accent-text)",
         borderRadius: 4,
         fontVariantNumeric: "tabular-nums"
       }, children: [
@@ -8897,8 +8897,9 @@ ${email?.body || ""}`
       alignItems: "center",
       gap: 6,
       padding: "6px 12px",
-      background: primary ? h ? "#5558E0" : "#6366F1" : h ? "#232328" : "transparent",
-      border: primary ? "1px solid #5558E0" : `1px solid ${h ? "#3F3F46" : "#27272A"}`,
+      background: primary ? "var(--accent-gradient)" : h ? "#232328" : "transparent",
+      filter: primary && h ? "brightness(0.92)" : "none",
+      border: primary ? "1px solid var(--accent)" : `1px solid ${h ? "#3F3F46" : "#27272A"}`,
       borderRadius: 4,
       color: primary ? "#fff" : "#E4E4E7",
       fontSize: 12,
@@ -9038,9 +9039,9 @@ ${email?.body || ""}`
                 padding: "2px 8px",
                 fontSize: 11,
                 borderRadius: 3,
-                background: email.is_read ? "rgba(99,102,241,0.10)" : "rgba(99,102,241,0.20)",
-                border: "1px solid rgba(99,102,241,0.25)",
-                color: "#A5A8F4",
+                background: email.is_read ? "var(--accent-soft)" : "var(--accent-soft-strong)",
+                border: "1px solid var(--accent-border)",
+                color: "var(--accent-text)",
                 fontWeight: 500
               }, children: email.is_read ? "Mark unread" : "Mark read" }),
               /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: { fontSize: 11, color: "#71717A", fontFamily: "JetBrains Mono, monospace" }, children: "Esc to close" })
@@ -9192,18 +9193,18 @@ ${email?.body || ""}`
         alignItems: "center",
         gap: 5,
         padding: "2px 4px 2px 8px",
-        background: "rgba(99,102,241,0.14)",
-        border: "1px solid rgba(99,102,241,0.30)",
+        background: "var(--accent-soft-strong)",
+        border: "1px solid var(--accent-border)",
         borderRadius: 3,
         fontSize: 12,
-        color: "#C7C9FF"
+        color: "var(--accent-text)"
       }, children: [
         addr,
         /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
           "button",
           {
             onClick: () => setList(list.filter((x) => x !== addr)),
-            style: { background: "transparent", border: "none", color: "#C7C9FF", padding: 2, display: "inline-flex" },
+            style: { background: "transparent", border: "none", color: "var(--accent-text)", padding: 2, display: "inline-flex" },
             children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(IconX, { size: 9 })
           }
         )
@@ -9337,7 +9338,7 @@ ${email?.body || ""}`
               width: 18,
               height: 18,
               borderRadius: "50%",
-              background: fromAcct.color || "#6366F1",
+              background: fromAcct.color || "var(--accent)",
               color: "#fff",
               fontSize: 10,
               fontWeight: 600,
@@ -9778,9 +9779,63 @@ ${email?.body || ""}`
   }
   var ColorMix_default = ColorMix;
 
+  // src/renderer/appearance.js
+  var DEFAULTS = {
+    accentMix: ["#6366F1", "#8B5CF6"],
+    density: "comfortable",
+    fontSize: "medium",
+    bgStyle: "solid"
+  };
+  var FONT_ZOOM = { small: 0.92, medium: 1, large: 1.08 };
+  function applyAppearance(state) {
+    const s = { ...DEFAULTS, ...state };
+    const root2 = document.documentElement;
+    const mix = Array.isArray(s.accentMix) && s.accentMix.length ? s.accentMix : DEFAULTS.accentMix;
+    const lead = mix[0];
+    root2.style.setProperty("--accent", lead);
+    root2.style.setProperty("--accent-gradient", mixGradient(mix));
+    root2.style.setProperty("--accent-soft", hexA(lead, 0.1));
+    root2.style.setProperty("--accent-soft-strong", hexA(lead, 0.16));
+    root2.style.setProperty("--accent-border", hexA(lead, 0.28));
+    root2.style.setProperty("--accent-text", hexA(lead, 0.85));
+    root2.dataset.density = s.density;
+    root2.dataset.bg = s.bgStyle;
+    root2.style.zoom = "";
+    root2.style.setProperty("--ui-zoom", String(FONT_ZOOM[s.fontSize] ?? 1));
+  }
+  async function loadAppearance() {
+    const api = window.api?.settings;
+    if (!api) return DEFAULTS;
+    try {
+      const [accentMix, density, fontSize, bgStyle] = await Promise.all([
+        api.getAccentMix(),
+        api.getDensity(),
+        api.getFontSize(),
+        api.getBgStyle()
+      ]);
+      return {
+        accentMix: accentMix || DEFAULTS.accentMix,
+        density: density || DEFAULTS.density,
+        fontSize: fontSize || DEFAULTS.fontSize,
+        bgStyle: bgStyle || DEFAULTS.bgStyle
+      };
+    } catch {
+      return DEFAULTS;
+    }
+  }
+  async function saveAppearance(patch) {
+    const api = window.api?.settings;
+    if (!api) return;
+    const ops = [];
+    if (patch.accentMix !== void 0) ops.push(api.setAccentMix(patch.accentMix));
+    if (patch.density !== void 0) ops.push(api.setDensity(patch.density));
+    if (patch.fontSize !== void 0) ops.push(api.setFontSize(patch.fontSize));
+    if (patch.bgStyle !== void 0) ops.push(api.setBgStyle(patch.bgStyle));
+    await Promise.all(ops);
+  }
+
   // src/renderer/SettingsScreen.jsx
   var import_jsx_runtime12 = __toESM(require_jsx_runtime());
-  var DEFAULT_MIX = ["#6366F1", "#8B5CF6"];
   var CATEGORIES2 = {
     newsletter: "Newsletter",
     spam: "Spam",
@@ -9788,6 +9843,24 @@ ${email?.body || ""}`
     receipt: "Receipt",
     other: "Other"
   };
+  function SegmentRow({ label, hint, value, options, onChange }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#71717A", marginBottom: 8 }, children: label }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { display: "inline-flex", border: "1px solid rgba(255,255,255,0.10)", borderRadius: 6, padding: 3, background: "#161618" }, children: options.map((o) => {
+        const active = value === o.id;
+        return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { type: "button", onClick: () => onChange(o.id), style: {
+          padding: "5px 14px",
+          fontSize: 12,
+          fontWeight: 500,
+          background: active ? "#27272A" : "transparent",
+          border: "none",
+          borderRadius: 4,
+          color: active ? "#E4E4E7" : "#A1A1AA"
+        }, children: o.label }, o.id);
+      }) }),
+      hint && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { fontSize: 11.5, color: "#71717A", marginTop: 8 }, children: hint })
+    ] });
+  }
   function Section({ title, subtitle, children }) {
     return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("section", { children: [
       /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("header", { style: { marginBottom: 10 }, children: [
@@ -9862,7 +9935,7 @@ ${email?.body || ""}`
     const [newTplBody, setNewTplBody] = (0, import_react11.useState)("");
     const [dbInfo, setDbInfo] = (0, import_react11.useState)(null);
     const [syncErrors, setSyncErrors] = (0, import_react11.useState)({});
-    const [accentMix, setAccentMix] = (0, import_react11.useState)(DEFAULT_MIX);
+    const [appearance, setAppearance] = (0, import_react11.useState)(DEFAULTS);
     (0, import_react11.useEffect)(() => {
       Promise.all([
         window.api.accounts.list(),
@@ -9872,8 +9945,8 @@ ${email?.body || ""}`
         window.api.templates.list(),
         window.api.settings.getDbInfo(),
         window.api.accounts.getSyncErrors(),
-        window.api.settings.getAccentMix()
-      ]).then(([accts, rls, freq, key, tmpls, info, errs, mix]) => {
+        loadAppearance()
+      ]).then(([accts, rls, freq, key, tmpls, info, errs, appr]) => {
         setAccounts(accts);
         setRules(rls);
         setSyncFreq(freq);
@@ -9881,7 +9954,7 @@ ${email?.body || ""}`
         setTemplates(tmpls);
         setDbInfo(info);
         setSyncErrors(errs || {});
-        setAccentMix(mix || DEFAULT_MIX);
+        setAppearance(appr);
       }).catch(console.error);
     }, []);
     const addRule = async () => {
@@ -9929,9 +10002,12 @@ ${email?.body || ""}`
       setDeeplSaved(true);
       setTimeout(() => setDeeplSaved(false), 2e3);
     };
-    const handleAccentMix = async (mix) => {
-      setAccentMix(mix);
-      await window.api.settings.setAccentMix(mix);
+    const updateAppearance = async (patch) => {
+      const next = { ...appearance, ...patch };
+      setAppearance(next);
+      applyAppearance(next);
+      window.dispatchEvent(new CustomEvent("appearance:change", { detail: next }));
+      await saveAppearance(patch);
     };
     return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { display: "flex", flexDirection: "column", height: "100%", minHeight: 0 }, children: [
       /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: {
@@ -10060,8 +10136,8 @@ ${email?.body || ""}`
             /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { display: "flex", justifyContent: "flex-end" }, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { onClick: addRule, disabled: !newRulePattern.trim(), style: {
               padding: "4px 10px",
               fontSize: 11.5,
-              background: newRulePattern.trim() ? "#6366F1" : "#27272A",
-              border: "1px solid " + (newRulePattern.trim() ? "#6366F1" : "#3F3F46"),
+              background: newRulePattern.trim() ? "var(--accent-gradient)" : "#27272A",
+              border: "1px solid " + (newRulePattern.trim() ? "var(--accent)" : "#3F3F46"),
               borderRadius: 4,
               color: newRulePattern.trim() ? "#fff" : "#52525B",
               fontWeight: 500,
@@ -10107,8 +10183,8 @@ ${email?.body || ""}`
             /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { onClick: handleSaveDeeplKey, style: {
               padding: "4px 12px",
               fontSize: 12,
-              background: deeplSaved ? "#22C55E" : "#6366F1",
-              border: "1px solid " + (deeplSaved ? "#22C55E" : "#6366F1"),
+              background: deeplSaved ? "#22C55E" : "var(--accent-gradient)",
+              border: "1px solid " + (deeplSaved ? "#22C55E" : "var(--accent)"),
               borderRadius: 4,
               color: "#fff",
               fontWeight: 500
@@ -10181,8 +10257,8 @@ ${email?.body || ""}`
                 style: {
                   padding: "6px 10px",
                   fontSize: 11.5,
-                  background: newTplName.trim() && newTplBody.trim() ? "#6366F1" : "#27272A",
-                  border: "1px solid " + (newTplName.trim() && newTplBody.trim() ? "#6366F1" : "#3F3F46"),
+                  background: newTplName.trim() && newTplBody.trim() ? "var(--accent-gradient)" : "#27272A",
+                  border: "1px solid " + (newTplName.trim() && newTplBody.trim() ? "var(--accent)" : "#3F3F46"),
                   borderRadius: 4,
                   color: newTplName.trim() && newTplBody.trim() ? "#fff" : "#52525B",
                   fontWeight: 500,
@@ -10194,15 +10270,47 @@ ${email?.body || ""}`
             )
           ] }) })
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Section, { title: "Appearance", subtitle: "Pick an accent color or blend multiple colors into a gradient used throughout the app.", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { border: "1px solid #27272A", borderRadius: 6, background: "#18181B", padding: 16 }, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-          ColorMix_default,
-          {
-            value: accentMix,
-            onChange: handleAccentMix,
-            onReset: () => handleAccentMix(DEFAULT_MIX),
-            ui: { bg: "#18181B", text: "#E4E4E7", muted: "#71717A", border: "rgba(255,255,255,0.08)" }
-          }
-        ) }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Section, { title: "Appearance", subtitle: "Customize the accent color, density and feel of the app.", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { border: "1px solid #27272A", borderRadius: 6, background: "#18181B", padding: 16, display: "flex", flexDirection: "column", gap: 20 }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+            ColorMix_default,
+            {
+              value: appearance.accentMix,
+              onChange: (mix) => updateAppearance({ accentMix: mix }),
+              onReset: () => updateAppearance({ accentMix: DEFAULTS.accentMix }),
+              ui: { bg: "#18181B", text: "#E4E4E7", muted: "#71717A", border: "rgba(255,255,255,0.08)" }
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+            SegmentRow,
+            {
+              label: "Density",
+              hint: "How tight the email rows and navigation should be.",
+              value: appearance.density,
+              options: [{ id: "comfortable", label: "Comfortable" }, { id: "compact", label: "Compact" }],
+              onChange: (v) => updateAppearance({ density: v })
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+            SegmentRow,
+            {
+              label: "Font size",
+              hint: "Scale the entire interface up or down.",
+              value: appearance.fontSize,
+              options: [{ id: "small", label: "Small" }, { id: "medium", label: "Medium" }, { id: "large", label: "Large" }],
+              onChange: (v) => updateAppearance({ fontSize: v })
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+            SegmentRow,
+            {
+              label: "Background",
+              hint: "Solid dark, or a subtle gradient tinted with the accent colors.",
+              value: appearance.bgStyle,
+              options: [{ id: "solid", label: "Solid" }, { id: "gradient", label: "Gradient" }],
+              onChange: (v) => updateAppearance({ bgStyle: v })
+            }
+          )
+        ] }) }),
         /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Section, { title: "About", subtitle: null, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { fontSize: 12, color: "#71717A", lineHeight: 1.7 }, children: [
           /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
             "MailTriage ",
@@ -10480,8 +10588,8 @@ ${email?.body || ""}`
           fontWeight: 500,
           padding: "2px 7px",
           borderRadius: 4,
-          background: "rgba(99,102,241,0.14)",
-          color: "#A5A8F4",
+          background: "var(--accent-soft-strong)",
+          color: "var(--accent-text)",
           fontVariantNumeric: "tabular-nums"
         }, children: emails.length })
       ] }),
@@ -10492,8 +10600,8 @@ ${email?.body || ""}`
           gap: 12,
           padding: "11px 16px",
           borderBottom: "1px solid #1F1F22",
-          borderLeft: openEmailId === e.id ? "2px solid #6366F1" : "2px solid transparent",
-          background: openEmailId === e.id ? "rgba(99,102,241,0.10)" : "transparent",
+          borderLeft: openEmailId === e.id ? "2px solid var(--accent)" : "2px solid transparent",
+          background: openEmailId === e.id ? "var(--accent-soft)" : "transparent",
           cursor: "pointer"
         }, children: [
           /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { style: { minWidth: 0 }, children: [
@@ -10550,6 +10658,10 @@ ${email?.body || ""}`
     (0, import_react13.useEffect)(() => {
       refreshAccounts();
       refreshTemplates();
+      loadAppearance().then(applyAppearance);
+      const onChange = (e) => applyAppearance(e.detail);
+      window.addEventListener("appearance:change", onChange);
+      return () => window.removeEventListener("appearance:change", onChange);
     }, []);
     (0, import_react13.useEffect)(() => {
       const unsub = window.api.events.onOpenEmail((id) => {

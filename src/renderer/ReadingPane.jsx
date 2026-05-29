@@ -20,8 +20,9 @@ function ReplyChip({ children, onClick, primary }) {
     <button onClick={onClick} onMouseEnter={() => sh(true)} onMouseLeave={() => sh(false)} style={{
       display: 'inline-flex', alignItems: 'center', gap: 6,
       padding: '6px 12px',
-      background: primary ? (h ? '#5558E0' : '#6366F1') : (h ? '#232328' : 'transparent'),
-      border: primary ? '1px solid #5558E0' : `1px solid ${h ? '#3F3F46' : '#27272A'}`,
+      background: primary ? 'var(--accent-gradient)' : (h ? '#232328' : 'transparent'),
+      filter: primary && h ? 'brightness(0.92)' : 'none',
+      border: primary ? '1px solid var(--accent)' : `1px solid ${h ? '#3F3F46' : '#27272A'}`,
       borderRadius: 4, color: primary ? '#fff' : '#E4E4E7',
       fontSize: 12, fontWeight: 500,
     }}>{children}</button>
@@ -156,9 +157,9 @@ export default function ReadingPane({
                   <CategoryBadge category={email.category} />
                   <button onClick={handleMarkReadToggle} style={{
                     padding: '2px 8px', fontSize: 11, borderRadius: 3,
-                    background: email.is_read ? 'rgba(99,102,241,0.10)' : 'rgba(99,102,241,0.20)',
-                    border: '1px solid rgba(99,102,241,0.25)',
-                    color: '#A5A8F4', fontWeight: 500,
+                    background: email.is_read ? 'var(--accent-soft)' : 'var(--accent-soft-strong)',
+                    border: '1px solid var(--accent-border)',
+                    color: 'var(--accent-text)', fontWeight: 500,
                   }}>
                     {email.is_read ? 'Mark unread' : 'Mark read'}
                   </button>

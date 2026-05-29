@@ -9,16 +9,16 @@ function NavBtn({ icon, active, onClick, label }) {
       style={{
         position: 'relative',
         width: 32, height: 32, borderRadius: 5,
-        background: active ? 'rgba(99,102,241,0.14)' : (h ? '#1A1A1E' : 'transparent'),
+        background: active ? 'var(--accent-soft-strong)' : (h ? '#1A1A1E' : 'transparent'),
         border: 'none',
-        color: active ? '#C7C9FF' : (h ? '#E4E4E7' : '#71717A'),
+        color: active ? 'var(--accent-text)' : (h ? '#E4E4E7' : '#71717A'),
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         transition: 'all .1s',
       }}>
       {active && (
         <div style={{
           position: 'absolute', left: -10, top: 6, bottom: 6,
-          width: 2, borderRadius: 1, background: '#6366F1',
+          width: 2, borderRadius: 1, background: 'var(--accent-gradient)',
         }} />
       )}
       {icon}
@@ -40,7 +40,7 @@ export default function Sidebar({ accounts, activeAccount, setActiveAccount, act
     }}>
       <div style={{
         width: 28, height: 28, borderRadius: 6,
-        background: '#6366F1',
+        background: 'var(--accent-gradient)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         marginBottom: 14,
         flexShrink: 0,
@@ -53,8 +53,8 @@ export default function Sidebar({ accounts, activeAccount, setActiveAccount, act
 
       <button onClick={onCompose} title="New message (C)" style={{
         width: 28, height: 28, borderRadius: 6,
-        background: 'rgba(99,102,241,0.14)', border: '1px solid rgba(99,102,241,0.28)',
-        color: '#A5A8F4',
+        background: 'var(--accent-soft-strong)', border: '1px solid var(--accent-border)',
+        color: 'var(--accent-text)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         marginBottom: 14,
       }}>
@@ -71,10 +71,10 @@ export default function Sidebar({ accounts, activeAccount, setActiveAccount, act
               style={{
                 position: 'relative',
                 width: 28, height: 28, borderRadius: '50%',
-                background: a.color || '#6366F1', color: '#fff',
+                background: a.color || 'var(--accent)', color: '#fff',
                 fontSize: 12, fontWeight: 600,
                 border: active ? '2px solid #fff' : '2px solid transparent',
-                outline: active ? '1px solid #6366F1' : 'none',
+                outline: active ? '1px solid var(--accent)' : 'none',
                 outlineOffset: 1,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 opacity: active ? 1 : 0.85,
@@ -109,9 +109,9 @@ export default function Sidebar({ accounts, activeAccount, setActiveAccount, act
         title="QuickClean"
         style={{
           width: 32, height: 32, borderRadius: 5, marginBottom: 6,
-          background: qcHover ? 'rgba(99,102,241,0.14)' : 'transparent',
+          background: qcHover ? 'var(--accent-soft-strong)' : 'transparent',
           border: 'none',
-          color: qcHover ? '#C7C9FF' : '#71717A',
+          color: qcHover ? 'var(--accent-text)' : '#71717A',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           transition: 'all .1s',
         }}>

@@ -83,10 +83,10 @@ function TriageCard({ email, accounts, selected, onSelect, onOpen, isOpen, snooz
 
   const acct = accounts.find(a => a.id === email.account_id) || {};
 
-  const bg = isOpen ? 'rgba(99,102,241,0.10)'
-    : selected ? 'rgba(99,102,241,0.07)'
+  const bg = isOpen ? 'var(--accent-soft)'
+    : selected ? 'var(--accent-soft)'
     : isHover ? '#1A1A1E' : 'transparent';
-  const borderLeft = (isOpen || selected) ? '2px solid #6366F1' : '2px solid transparent';
+  const borderLeft = (isOpen || selected) ? '2px solid var(--accent)' : '2px solid transparent';
 
   const initial = (acct.display_name || acct.email || '?')[0].toUpperCase();
 
@@ -103,7 +103,7 @@ function TriageCard({ email, accounts, selected, onSelect, onOpen, isOpen, snooz
         gridTemplateColumns: '28px 16px 200px 1fr 80px auto',
         alignItems: 'center',
         gap: 12,
-        padding: '11px 16px 11px 14px',
+        padding: 'var(--row-pad-y) var(--row-pad-x) var(--row-pad-y) 14px',
         borderBottom: '1px solid #1F1F22',
         borderLeft,
         background: bg,
@@ -115,8 +115,8 @@ function TriageCard({ email, accounts, selected, onSelect, onOpen, isOpen, snooz
         style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: (isHover || selected) ? 1 : 0, transition: 'opacity .12s' }}>
         <div style={{
           width: 16, height: 16, borderRadius: 3,
-          border: selected ? '1px solid #6366F1' : '1px solid #52525B',
-          background: selected ? '#6366F1' : 'transparent',
+          border: selected ? '1px solid var(--accent)' : '1px solid #52525B',
+          background: selected ? 'var(--accent)' : 'transparent',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
           {selected && <IconCheck size={11} stroke="#fff" strokeWidth={2} />}
@@ -124,13 +124,13 @@ function TriageCard({ email, accounts, selected, onSelect, onOpen, isOpen, snooz
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        {!email.is_read && <IconCircle size={6} color="#6366F1" />}
+        {!email.is_read && <IconCircle size={6} color="var(--accent)" />}
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
         <div title={acct.email} style={{
           width: 16, height: 16, borderRadius: '50%',
-          background: acct.color || '#6366F1', color: '#fff',
+          background: acct.color || 'var(--accent)', color: '#fff',
           fontSize: 9, fontWeight: 600, flexShrink: 0,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>{initial}</div>
@@ -227,7 +227,7 @@ function TopBar({ unreadCount, filter, setFilter, onOpenSearch }) {
         <span style={{
           fontSize: 11, fontWeight: 500,
           padding: '2px 7px', borderRadius: 4,
-          background: 'rgba(99,102,241,0.14)', color: '#A5A8F4',
+          background: 'var(--accent-soft-strong)', color: 'var(--accent-text)',
           fontVariantNumeric: 'tabular-nums',
         }}>{unreadCount} unread</span>
       </div>
@@ -238,9 +238,9 @@ function TopBar({ unreadCount, filter, setFilter, onOpenSearch }) {
             <button key={c.id} onClick={() => setFilter(c.id)} style={{
               padding: '4px 10px', fontSize: 12, fontWeight: 500,
               borderRadius: 4,
-              border: active ? '1px solid #6366F1' : '1px solid #27272A',
-              background: active ? 'rgba(99,102,241,0.14)' : 'transparent',
-              color: active ? '#C7C9FF' : '#A1A1AA',
+              border: active ? '1px solid var(--accent)' : '1px solid #27272A',
+              background: active ? 'var(--accent-soft-strong)' : 'transparent',
+              color: active ? 'var(--accent-text)' : '#A1A1AA',
               transition: 'all .1s',
             }}>{c.label}</button>
           );
@@ -295,8 +295,8 @@ function BulkActionBar({ count, selected, onClear, onArchive, onDelete, onMarkRe
     }}>
       <div style={{
         fontSize: 12, fontWeight: 600,
-        padding: '3px 8px', background: 'rgba(99,102,241,0.16)',
-        color: '#C7C9FF', borderRadius: 4,
+        padding: '3px 8px', background: 'var(--accent-soft-strong)',
+        color: 'var(--accent-text)', borderRadius: 4,
         fontVariantNumeric: 'tabular-nums',
       }}>{count} selected</div>
       <button onClick={onClear} style={{

@@ -31,12 +31,12 @@ function RecipientField({ list, setList, placeholder }) {
         <span key={addr} style={{
           display: 'inline-flex', alignItems: 'center', gap: 5,
           padding: '2px 4px 2px 8px',
-          background: 'rgba(99,102,241,0.14)', border: '1px solid rgba(99,102,241,0.30)',
-          borderRadius: 3, fontSize: 12, color: '#C7C9FF',
+          background: 'var(--accent-soft-strong)', border: '1px solid var(--accent-border)',
+          borderRadius: 3, fontSize: 12, color: 'var(--accent-text)',
         }}>
           {addr}
           <button onClick={() => setList(list.filter(x => x !== addr))}
-            style={{ background: 'transparent', border: 'none', color: '#C7C9FF', padding: 2, display: 'inline-flex' }}>
+            style={{ background: 'transparent', border: 'none', color: 'var(--accent-text)', padding: 2, display: 'inline-flex' }}>
             <IconX size={9} />
           </button>
         </span>
@@ -153,7 +153,7 @@ export default function ComposeModal({ onClose, accounts, templates, initial }) 
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
               <div style={{
                 width: 18, height: 18, borderRadius: '50%',
-                background: fromAcct.color || '#6366F1', color: '#fff',
+                background: fromAcct.color || 'var(--accent)', color: '#fff',
                 fontSize: 10, fontWeight: 600,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>{(fromAcct.display_name || fromAcct.email || '?')[0]?.toUpperCase()}</div>
