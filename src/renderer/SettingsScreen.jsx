@@ -3,6 +3,9 @@ import {
   IconPlus, IconTrash, IconCircle, IconSparkle, IconRefresh
 } from './icons/index.jsx';
 import { CategoryBadge } from './TriageScreen.jsx';
+import ColorMix, { deriveAccentTokens } from './ColorMix.jsx';
+
+const DEFAULT_MIX = ['#6366F1', '#8B5CF6'];
 
 const CATEGORIES = {
   newsletter: 'Newsletter', spam: 'Spam', important: 'Important',
@@ -69,6 +72,7 @@ export default function SettingsScreen({ onAddAccount }) {
   const [newTplBody, setNewTplBody] = useState('');
   const [dbInfo, setDbInfo] = useState(null);
   const [syncErrors, setSyncErrors] = useState({});
+  const [accentMix, setAccentMix] = useState(DEFAULT_MIX);
 
   useEffect(() => {
     Promise.all([
@@ -79,7 +83,8 @@ export default function SettingsScreen({ onAddAccount }) {
       window.api.templates.list(),
       window.api.settings.getDbInfo(),
       window.api.accounts.getSyncErrors(),
-    ]).then(([accts, rls, freq, key, tmpls, info, errs]) => {
+      window.api.settings.getAccentMix(),
+    ]).then(([accts, rls, freq, key, tmpls, info, errs, mix]) => {
       setAccounts(accts);
       setRules(rls);
       setSyncFreq(freq);
@@ -87,6 +92,7 @@ export default function SettingsScreen({ onAddAccount }) {
       setTemplates(tmpls);
       setDbInfo(info);
       setSyncErrors(errs || {});
+      setAccentMix(mix || DEFAULT_MIX);
     }).catch(console.error);
   }, []);
 
@@ -139,6 +145,11 @@ export default function SettingsScreen({ onAddAccount }) {
     await window.api.settings.setDeeplKey(deeplKey);
     setDeeplSaved(true);
     setTimeout(() => setDeeplSaved(false), 2000);
+  };
+
+  const handleAccentMix = async (mix) => {
+    setAccentMix(mix);
+    await window.api.settings.setAccentMix(mix);
   };
 
   return (
@@ -354,6 +365,18 @@ export default function SettingsScreen({ onAddAccount }) {
                     }}>Add</button>
                 </div>
               </div>
+            </div>
+          </Section>
+
+          {/* Appearance */}
+          <Section title="Appearance" subtitle="Pick an accent color or blend multiple colors into a gradient used throughout the app.">
+            <div style={{ border: '1px solid #27272A', borderRadius: 6, background: '#18181B', padding: 16 }}>
+              <ColorMix
+                value={accentMix}
+                onChange={handleAccentMix}
+                onReset={() => handleAccentMix(DEFAULT_MIX)}
+                ui={{ bg: '#18181B', text: '#E4E4E7', muted: '#71717A', border: 'rgba(255,255,255,0.08)' }}
+              />
             </div>
           </Section>
 

@@ -53,6 +53,8 @@ contextBridge.exposeInMainWorld('api', {
     getDeeplKey: () => ipcRenderer.invoke('settings:getDeeplKey'),
     setDeeplKey: (key) => ipcRenderer.invoke('settings:setDeeplKey', key),
     getDbInfo: () => ipcRenderer.invoke('settings:getDbInfo'),
+    getAccentMix: () => ipcRenderer.invoke('settings:getAccentMix'),
+    setAccentMix: (mix) => ipcRenderer.invoke('settings:setAccentMix', mix),
   },
   events: {
     onSyncTick: (cb) => {

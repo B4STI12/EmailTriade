@@ -521,6 +521,12 @@ ipcMain.handle('settings:setDeeplKey', (_, key) => {
   getStore().set('settings.deeplKey', key);
 });
 
+ipcMain.handle('settings:getAccentMix', () => getStore().get('settings.accentMix', ['#6366F1', '#8B5CF6']));
+
+ipcMain.handle('settings:setAccentMix', (_, mix) => {
+  getStore().set('settings.accentMix', mix);
+});
+
 ipcMain.handle('settings:getDbInfo', () => {
   const db = getDb();
   const pageCount = db.pragma('page_count')[0]?.page_count || 0;

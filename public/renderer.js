@@ -9669,7 +9669,118 @@ ${email?.body || ""}`
 
   // src/renderer/SettingsScreen.jsx
   var import_react11 = __toESM(require_react());
+
+  // src/renderer/ColorMix.jsx
   var import_jsx_runtime11 = __toESM(require_jsx_runtime());
+  function hexA(hex, a) {
+    if (typeof hex !== "string" || hex[0] !== "#") return hex;
+    let h = hex.slice(1);
+    if (h.length === 3) h = h.split("").map((c) => c + c).join("");
+    const n = parseInt(h, 16);
+    return `rgba(${n >> 16 & 255}, ${n >> 8 & 255}, ${n & 255}, ${a})`;
+  }
+  function mixGradient(mix, { angle = 135, fallback = "#6366F1" } = {}) {
+    if (!Array.isArray(mix) || mix.length === 0) return fallback;
+    if (mix.length === 1) return mix[0];
+    return `linear-gradient(${angle}deg, ${mix.join(", ")})`;
+  }
+  function toggleMixColor(mix, color, { max = 4, min = 1 } = {}) {
+    const has = mix.includes(color);
+    if (has) return mix.length > min ? mix.filter((x) => x !== color) : mix;
+    if (mix.length >= max) return [...mix.slice(mix.length - max + 1), color];
+    return [...mix, color];
+  }
+  var DEFAULT_SWATCHES = [
+    "#6366F1",
+    "#8B5CF6",
+    "#A855F7",
+    "#2563EB",
+    "#38BDF8",
+    "#0D9488",
+    "#10B981",
+    "#4ADE80",
+    "#F59E0B",
+    "#F43F5E",
+    "#EC4899",
+    "#DB2777",
+    "#A64B2E",
+    "#E11D8F"
+  ];
+  function ColorMix({
+    value,
+    onChange,
+    options = DEFAULT_SWATCHES,
+    max = 4,
+    min = 1,
+    columns = 7,
+    onReset,
+    showPreview = true,
+    label = "Accent mix",
+    hint = `Tap to add up to ${max} colors \u2014 they blend into one accent.`,
+    radius = 8,
+    ui = {}
+  }) {
+    const mix = Array.isArray(value) ? value : [];
+    const theme = {
+      bg: ui.bg || "#161618",
+      text: ui.text || "#E8E8EC",
+      muted: ui.muted || "#8B8B93",
+      border: ui.border || "rgba(255,255,255,0.10)"
+    };
+    const toggle = (c) => onChange(toggleMixColor(mix, c, { max, min }));
+    const pill = (r) => r > 8 ? 999 : r;
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: { fontFamily: "inherit", color: theme.text }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 12 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { style: { margin: 0, fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: theme.muted }, children: label }),
+        onReset && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { onClick: onReset, style: { background: "transparent", border: "none", color: mix[0] || theme.text, fontSize: 11, fontWeight: 600, cursor: "pointer", padding: 0 }, children: "Reset" })
+      ] }),
+      showPreview && /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: { borderRadius: radius + 1, overflow: "hidden", border: `1px solid ${theme.border}`, marginBottom: 13 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { style: { height: 46, background: mixGradient(mix) } }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 9, padding: "10px 11px", background: theme.bg }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { style: { padding: "6px 12px", borderRadius: pill(radius), background: mixGradient(mix), color: "#fff", fontSize: 12, fontWeight: 600 }, children: "Primary" }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { style: { padding: "5px 11px", borderRadius: pill(radius), background: hexA(mix[0], 0.16), color: mix[0], fontSize: 12, fontWeight: 600 }, children: "Selected" }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { style: { marginLeft: "auto", fontFamily: "monospace", fontSize: 11, color: theme.muted }, children: [
+            mix.length,
+            " color",
+            mix.length > 1 ? "s" : ""
+          ] })
+        ] })
+      ] }),
+      hint && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { style: { fontSize: 11.5, color: theme.muted, marginBottom: 10 }, children: hint }),
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { style: { display: "grid", gridTemplateColumns: `repeat(${columns}, 1fr)`, gap: 9 }, children: options.map((c) => {
+        const i = mix.indexOf(c);
+        const active = i !== -1;
+        return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+          "button",
+          {
+            type: "button",
+            onClick: () => toggle(c),
+            title: c,
+            "aria-pressed": active,
+            style: {
+              position: "relative",
+              aspectRatio: "1",
+              borderRadius: radius,
+              background: c,
+              cursor: "pointer",
+              border: active ? `2px solid ${theme.text}` : "2px solid transparent",
+              boxShadow: active ? `0 0 0 2px ${hexA(theme.text, 0.2)}` : "none",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            },
+            children: active && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { style: { width: 16, height: 16, borderRadius: "50%", background: "rgba(0,0,0,0.35)", color: "#fff", fontSize: 9.5, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center" }, children: i + 1 })
+          },
+          c
+        );
+      }) })
+    ] });
+  }
+  var ColorMix_default = ColorMix;
+
+  // src/renderer/SettingsScreen.jsx
+  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
+  var DEFAULT_MIX = ["#6366F1", "#8B5CF6"];
   var CATEGORIES2 = {
     newsletter: "Newsletter",
     spam: "Spam",
@@ -9678,10 +9789,10 @@ ${email?.body || ""}`
     other: "Other"
   };
   function Section({ title, subtitle, children }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("section", { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("header", { style: { marginBottom: 10 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h2", { style: { margin: 0, fontSize: 13, fontWeight: 600, color: "#E4E4E7", letterSpacing: -0.1 }, children: title }),
-        subtitle && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: { margin: "4px 0 0", fontSize: 12, color: "#71717A", lineHeight: 1.5 }, children: subtitle })
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("section", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("header", { style: { marginBottom: 10 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h2", { style: { margin: 0, fontSize: 13, fontWeight: 600, color: "#E4E4E7", letterSpacing: -0.1 }, children: title }),
+        subtitle && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: { margin: "4px 0 0", fontSize: 12, color: "#71717A", lineHeight: 1.5 }, children: subtitle })
       ] }),
       children
     ] });
@@ -9751,6 +9862,7 @@ ${email?.body || ""}`
     const [newTplBody, setNewTplBody] = (0, import_react11.useState)("");
     const [dbInfo, setDbInfo] = (0, import_react11.useState)(null);
     const [syncErrors, setSyncErrors] = (0, import_react11.useState)({});
+    const [accentMix, setAccentMix] = (0, import_react11.useState)(DEFAULT_MIX);
     (0, import_react11.useEffect)(() => {
       Promise.all([
         window.api.accounts.list(),
@@ -9759,8 +9871,9 @@ ${email?.body || ""}`
         window.api.settings.getDeeplKey(),
         window.api.templates.list(),
         window.api.settings.getDbInfo(),
-        window.api.accounts.getSyncErrors()
-      ]).then(([accts, rls, freq, key, tmpls, info, errs]) => {
+        window.api.accounts.getSyncErrors(),
+        window.api.settings.getAccentMix()
+      ]).then(([accts, rls, freq, key, tmpls, info, errs, mix]) => {
         setAccounts(accts);
         setRules(rls);
         setSyncFreq(freq);
@@ -9768,6 +9881,7 @@ ${email?.body || ""}`
         setTemplates(tmpls);
         setDbInfo(info);
         setSyncErrors(errs || {});
+        setAccentMix(mix || DEFAULT_MIX);
       }).catch(console.error);
     }, []);
     const addRule = async () => {
@@ -9815,8 +9929,12 @@ ${email?.body || ""}`
       setDeeplSaved(true);
       setTimeout(() => setDeeplSaved(false), 2e3);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: { display: "flex", flexDirection: "column", height: "100%", minHeight: 0 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: {
+    const handleAccentMix = async (mix) => {
+      setAccentMix(mix);
+      await window.api.settings.setAccentMix(mix);
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { display: "flex", flexDirection: "column", height: "100%", minHeight: 0 }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: {
         padding: "14px 24px",
         borderBottom: "1px solid #27272A",
         background: "#18181B",
@@ -9825,21 +9943,21 @@ ${email?.body || ""}`
         alignItems: "baseline",
         gap: 12
       }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h1", { style: { margin: 0, fontSize: 14, fontWeight: 600, color: "#E4E4E7", letterSpacing: -0.1 }, children: "Settings" }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { style: { fontSize: 12, color: "#71717A" }, children: "Manage accounts, rules, sync, DeepL Write & templates" })
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h1", { style: { margin: 0, fontSize: 14, fontWeight: 600, color: "#E4E4E7", letterSpacing: -0.1 }, children: "Settings" }),
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { style: { fontSize: 12, color: "#71717A" }, children: "Manage accounts, rules, sync, DeepL Write & templates" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { style: { flex: 1, overflowY: "auto", padding: "24px 32px 48px" }, children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: { maxWidth: 720, display: "flex", flexDirection: "column", gap: 32 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(Section, { title: "Accounts", subtitle: "Mail accounts connected to this client.", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: { border: "1px solid #27272A", borderRadius: 6, overflow: "hidden", background: "#18181B" }, children: [
-            accounts.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { style: { padding: "20px", color: "#52525B", fontSize: 12 }, children: "No accounts connected." }),
-            accounts.map((a, i) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: {
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { flex: 1, overflowY: "auto", padding: "24px 32px 48px" }, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { maxWidth: 720, display: "flex", flexDirection: "column", gap: 32 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(Section, { title: "Accounts", subtitle: "Mail accounts connected to this client.", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { border: "1px solid #27272A", borderRadius: 6, overflow: "hidden", background: "#18181B" }, children: [
+            accounts.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { padding: "20px", color: "#52525B", fontSize: 12 }, children: "No accounts connected." }),
+            accounts.map((a, i) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: {
               display: "flex",
               alignItems: "center",
               gap: 12,
               padding: "10px 14px",
               borderTop: i > 0 ? "1px solid #232326" : "none"
             }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { style: {
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: {
                 width: 28,
                 height: 28,
                 borderRadius: "50%",
@@ -9851,25 +9969,25 @@ ${email?.body || ""}`
                 alignItems: "center",
                 justifyContent: "center"
               }, children: (a.display_name || a.email || "?")[0].toUpperCase() }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: { display: "flex", flexDirection: "column", flex: 1, minWidth: 0 }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { style: { fontSize: 13, color: "#E4E4E7", fontWeight: 500 }, children: a.email }),
-                /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { style: { fontSize: 11, color: "#71717A", display: "flex", alignItems: "center", gap: 6 }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { display: "flex", flexDirection: "column", flex: 1, minWidth: 0 }, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { style: { fontSize: 13, color: "#E4E4E7", fontWeight: 500 }, children: a.email }),
+                /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { style: { fontSize: 11, color: "#71717A", display: "flex", alignItems: "center", gap: 6 }, children: [
                   a.provider === "gmail" ? "Gmail" : "Outlook",
-                  /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { style: { color: "#3F3F46" }, children: "\xB7" }),
-                  syncErrors[a.id] ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { style: { color: "#FCA5A5", display: "inline-flex", alignItems: "center", gap: 4 }, children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(IconCircle, { size: 5, color: "#EF4444" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { style: { color: "#3F3F46" }, children: "\xB7" }),
+                  syncErrors[a.id] ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { style: { color: "#FCA5A5", display: "inline-flex", alignItems: "center", gap: 4 }, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(IconCircle, { size: 5, color: "#EF4444" }),
                     " Sync failed"
-                  ] }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { style: { display: "inline-flex", alignItems: "center", gap: 4 }, children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(IconCircle, { size: 5, color: "#22C55E" }),
+                  ] }) : /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { style: { display: "inline-flex", alignItems: "center", gap: 4 }, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(IconCircle, { size: 5, color: "#22C55E" }),
                     " Active"
                   ] })
                 ] })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { onClick: () => reconnectAccount(a.id), style: ghostBtnStyle, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(IconRefresh, { size: 12, style: { display: "inline", marginRight: 4 } }),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { onClick: () => reconnectAccount(a.id), style: ghostBtnStyle, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(IconRefresh, { size: 12, style: { display: "inline", marginRight: 4 } }),
                 "Reconnect"
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
                 "button",
                 {
                   onClick: () => removeAccount(a.id),
@@ -9879,13 +9997,13 @@ ${email?.body || ""}`
               )
             ] }, a.id))
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("button", { onClick: onAddAccount, style: dashedBtnStyle, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(IconPlus, { size: 13 }),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { onClick: onAddAccount, style: dashedBtnStyle, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(IconPlus, { size: 13 }),
             " Add account"
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Section, { title: "Category rules", subtitle: "Senders matching a pattern are auto-assigned a category. Rules apply top-to-bottom.", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: { border: "1px solid #27272A", borderRadius: 6, overflow: "hidden", background: "#18181B" }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: {
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Section, { title: "Category rules", subtitle: "Senders matching a pattern are auto-assigned a category. Rules apply top-to-bottom.", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { border: "1px solid #27272A", borderRadius: 6, overflow: "hidden", background: "#18181B" }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: {
             display: "grid",
             gridTemplateColumns: "1fr 160px 80px",
             padding: "8px 14px",
@@ -9897,29 +10015,29 @@ ${email?.body || ""}`
             letterSpacing: 0.3,
             textTransform: "uppercase"
           }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: "Sender pattern" }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: "Category" }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { style: { textAlign: "right" }, children: "Actions" })
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { children: "Sender pattern" }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { children: "Category" }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { style: { textAlign: "right" }, children: "Actions" })
           ] }),
-          rules.map((r, i) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: {
+          rules.map((r, i) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: {
             display: "grid",
             gridTemplateColumns: "1fr 160px 80px",
             alignItems: "center",
             padding: "9px 14px",
             borderTop: i > 0 ? "1px solid #232326" : "none"
           }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("code", { style: patternStyle, children: r.pattern }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(CategoryBadge, { category: r.category }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { style: { display: "flex", justifyContent: "flex-end" }, children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { onClick: () => removeRule(r.id), style: {
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("code", { style: patternStyle, children: r.pattern }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(CategoryBadge, { category: r.category }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { display: "flex", justifyContent: "flex-end" }, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { onClick: () => removeRule(r.id), style: {
               padding: 4,
               background: "transparent",
               border: "none",
               color: "#71717A",
               display: "inline-flex",
               alignItems: "center"
-            }, title: "Delete rule", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(IconTrash, { size: 13 }) }) })
+            }, title: "Delete rule", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(IconTrash, { size: 13 }) }) })
           ] }, r.id)),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: {
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: {
             display: "grid",
             gridTemplateColumns: "1fr 160px 80px",
             alignItems: "center",
@@ -9928,7 +10046,7 @@ ${email?.body || ""}`
             borderTop: "1px solid #232326",
             background: "#1A1A1E"
           }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
               "input",
               {
                 value: newRulePattern,
@@ -9938,8 +10056,8 @@ ${email?.body || ""}`
                 style: { ...inputMonoStyle, width: "100%" }
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("select", { value: newRuleCat, onChange: (e) => setNewRuleCat(e.target.value), style: selectStyle, children: Object.entries(CATEGORIES2).map(([id, label]) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("option", { value: id, children: label }, id)) }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { style: { display: "flex", justifyContent: "flex-end" }, children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { onClick: addRule, disabled: !newRulePattern.trim(), style: {
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("select", { value: newRuleCat, onChange: (e) => setNewRuleCat(e.target.value), style: selectStyle, children: Object.entries(CATEGORIES2).map(([id, label]) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("option", { value: id, children: label }, id)) }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { display: "flex", justifyContent: "flex-end" }, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { onClick: addRule, disabled: !newRulePattern.trim(), style: {
               padding: "4px 10px",
               fontSize: 11.5,
               background: newRulePattern.trim() ? "#6366F1" : "#27272A",
@@ -9951,7 +10069,7 @@ ${email?.body || ""}`
             }, children: "Add" }) })
           ] })
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Section, { title: "Sync frequency", subtitle: "How often MailTriage checks for new messages.", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { style: {
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Section, { title: "Sync frequency", subtitle: "How often MailTriage checks for new messages.", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: {
           display: "inline-flex",
           border: "1px solid #27272A",
           borderRadius: 6,
@@ -9959,7 +10077,7 @@ ${email?.body || ""}`
           background: "#18181B"
         }, children: [{ id: "1m", label: "1 min" }, { id: "5m", label: "5 min" }, { id: "15m", label: "15 min" }, { id: "manual", label: "Manual" }].map((o) => {
           const active = syncFreq === o.id;
-          return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { onClick: () => handleSyncFreq(o.id), style: {
+          return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { onClick: () => handleSyncFreq(o.id), style: {
             padding: "5px 14px",
             fontSize: 12,
             fontWeight: 500,
@@ -9969,13 +10087,13 @@ ${email?.body || ""}`
             color: active ? "#E4E4E7" : "#A1A1AA"
           }, children: o.label }, o.id);
         }) }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Section, { title: "DeepL Write", subtitle: "Polish drafts inside the compose window. Your key is stored locally and never sent anywhere but DeepL.", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: { border: "1px solid #27272A", borderRadius: 6, background: "#18181B", padding: 14, display: "flex", flexDirection: "column", gap: 10 }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { style: { display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#71717A", fontWeight: 500, letterSpacing: 0.3, textTransform: "uppercase" }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(IconSparkle, { size: 11, stroke: "#A5A8F4" }),
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Section, { title: "DeepL Write", subtitle: "Polish drafts inside the compose window. Your key is stored locally and never sent anywhere but DeepL.", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { border: "1px solid #27272A", borderRadius: 6, background: "#18181B", padding: 14, display: "flex", flexDirection: "column", gap: 10 }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { style: { display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#71717A", fontWeight: 500, letterSpacing: 0.3, textTransform: "uppercase" }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(IconSparkle, { size: 11, stroke: "#A5A8F4" }),
             " API key"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: { display: "flex", gap: 8 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { display: "flex", gap: 8 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
               "input",
               {
                 type: showDeeplKey ? "text" : "password",
@@ -9985,8 +10103,8 @@ ${email?.body || ""}`
                 style: { ...inputMonoStyle, flex: 1, fontSize: 12 }
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { onClick: () => setShowDeeplKey((s) => !s), style: ghostBtnStyle, children: showDeeplKey ? "Hide" : "Show" }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { onClick: handleSaveDeeplKey, style: {
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { onClick: () => setShowDeeplKey((s) => !s), style: ghostBtnStyle, children: showDeeplKey ? "Hide" : "Show" }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { onClick: handleSaveDeeplKey, style: {
               padding: "4px 12px",
               fontSize: 12,
               background: deeplSaved ? "#22C55E" : "#6366F1",
@@ -9996,8 +10114,8 @@ ${email?.body || ""}`
               fontWeight: 500
             }, children: deeplSaved ? "Saved!" : "Save" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#71717A" }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { style: {
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#71717A" }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { style: {
               display: "inline-flex",
               alignItems: "center",
               gap: 4,
@@ -10006,17 +10124,17 @@ ${email?.body || ""}`
               background: deeplKey ? "rgba(34,197,94,0.12)" : "rgba(113,113,122,0.12)",
               color: deeplKey ? "#86EFAC" : "#A1A1AA"
             }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(IconCircle, { size: 5, color: deeplKey ? "#22C55E" : "#71717A" }),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(IconCircle, { size: 5, color: deeplKey ? "#22C55E" : "#71717A" }),
               deeplKey ? "Connected" : "Not connected"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { children: [
               "Get a key at ",
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { style: { color: "#A5A8F4" }, children: "deepl.com/write/api" })
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { style: { color: "#A5A8F4" }, children: "deepl.com/write/api" })
             ] })
           ] })
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Section, { title: "Quick reply templates", subtitle: "Snippets you can drop into any compose or reply. Surfaced in the toolbar dropdown.", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: { border: "1px solid #27272A", borderRadius: 6, overflow: "hidden", background: "#18181B" }, children: [
-          templates.map((t, i) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: {
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Section, { title: "Quick reply templates", subtitle: "Snippets you can drop into any compose or reply. Surfaced in the toolbar dropdown.", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { border: "1px solid #27272A", borderRadius: 6, overflow: "hidden", background: "#18181B" }, children: [
+          templates.map((t, i) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: {
             display: "grid",
             gridTemplateColumns: "180px 1fr 32px",
             alignItems: "start",
@@ -10024,9 +10142,9 @@ ${email?.body || ""}`
             padding: "12px 14px",
             borderTop: i > 0 ? "1px solid #232326" : "none"
           }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { style: { fontSize: 12.5, color: "#E4E4E7", fontWeight: 500, paddingTop: 1 }, children: t.name }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { style: { fontSize: 12, color: "#A1A1AA", lineHeight: 1.5 }, children: t.body }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { onClick: () => removeTemplate(t.id), style: {
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { style: { fontSize: 12.5, color: "#E4E4E7", fontWeight: 500, paddingTop: 1 }, children: t.name }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { style: { fontSize: 12, color: "#A1A1AA", lineHeight: 1.5 }, children: t.body }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { onClick: () => removeTemplate(t.id), style: {
               padding: 4,
               background: "transparent",
               border: "none",
@@ -10034,10 +10152,10 @@ ${email?.body || ""}`
               display: "inline-flex",
               alignItems: "center",
               justifyContent: "flex-end"
-            }, title: "Delete template", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(IconTrash, { size: 13 }) })
+            }, title: "Delete template", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(IconTrash, { size: 13 }) })
           ] }, t.id)),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { style: { padding: "12px 14px", borderTop: templates.length > 0 ? "1px solid #232326" : "none", background: "#1A1A1E", display: "flex", flexDirection: "column", gap: 8 }, children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: { display: "grid", gridTemplateColumns: "180px 1fr 70px", gap: 12, alignItems: "flex-start" }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { padding: "12px 14px", borderTop: templates.length > 0 ? "1px solid #232326" : "none", background: "#1A1A1E", display: "flex", flexDirection: "column", gap: 8 }, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { display: "grid", gridTemplateColumns: "180px 1fr 70px", gap: 12, alignItems: "flex-start" }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
               "input",
               {
                 value: newTplName,
@@ -10046,7 +10164,7 @@ ${email?.body || ""}`
                 style: { ...inputStyle, fontFamily: "inherit", fontSize: 12.5, width: "100%" }
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
               "textarea",
               {
                 value: newTplBody,
@@ -10055,7 +10173,7 @@ ${email?.body || ""}`
                 style: { ...inputStyle, fontFamily: "inherit", fontSize: 12, minHeight: 56, resize: "vertical", width: "100%" }
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
               "button",
               {
                 onClick: addTemplate,
@@ -10076,18 +10194,27 @@ ${email?.body || ""}`
             )
           ] }) })
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Section, { title: "About", subtitle: null, children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: { fontSize: 12, color: "#71717A", lineHeight: 1.7 }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Section, { title: "Appearance", subtitle: "Pick an accent color or blend multiple colors into a gradient used throughout the app.", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { border: "1px solid #27272A", borderRadius: 6, background: "#18181B", padding: 16 }, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+          ColorMix_default,
+          {
+            value: accentMix,
+            onChange: handleAccentMix,
+            onReset: () => handleAccentMix(DEFAULT_MIX),
+            ui: { bg: "#18181B", text: "#E4E4E7", muted: "#71717A", border: "rgba(255,255,255,0.08)" }
+          }
+        ) }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Section, { title: "About", subtitle: null, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { fontSize: 12, color: "#71717A", lineHeight: 1.7 }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
             "MailTriage ",
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { style: { color: "#E4E4E7" }, children: dbInfo?.version || "0.4.2" })
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { style: { color: "#E4E4E7" }, children: dbInfo?.version || "0.4.2" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
             "Local data: ",
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { style: { color: "#E4E4E7" }, children: dbInfo?.dataPath || "\u2026" })
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { style: { color: "#E4E4E7" }, children: dbInfo?.dataPath || "\u2026" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
             "Index size: ",
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { style: { color: "#E4E4E7" }, children: dbInfo?.indexSize || "\u2026" })
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { style: { color: "#E4E4E7" }, children: dbInfo?.indexSize || "\u2026" })
           ] })
         ] }) })
       ] }) })
@@ -10096,7 +10223,7 @@ ${email?.body || ""}`
 
   // src/renderer/QuickCleanModal.jsx
   var import_react12 = __toESM(require_react());
-  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
   function QuickCleanModal({ onClose }) {
     const [candidates, setCandidates] = (0, import_react12.useState)([]);
     const [index, setIndex] = (0, import_react12.useState)(0);
@@ -10134,15 +10261,15 @@ ${email?.body || ""}`
     const handleKeepAll = () => {
       advance();
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_jsx_runtime12.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { onClick: onClose, style: {
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_jsx_runtime13.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { onClick: onClose, style: {
         position: "fixed",
         inset: 0,
         background: "rgba(8,8,10,0.7)",
         zIndex: 100,
         animation: "fadeIn .14s ease-out"
       } }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: {
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: {
         position: "fixed",
         top: "50%",
         left: "50%",
@@ -10155,16 +10282,16 @@ ${email?.body || ""}`
         animation: "slideInRight .18s ease-out",
         overflow: "hidden"
       }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: {
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           padding: "14px 18px",
           borderBottom: "1px solid #27272A"
         }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { style: { fontSize: 13, fontWeight: 600, color: "#E4E4E7" }, children: "QuickClean" }),
-            !loading && !done && candidates.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { style: {
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { style: { fontSize: 13, fontWeight: 600, color: "#E4E4E7" }, children: "QuickClean" }),
+            !loading && !done && candidates.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { style: {
               fontSize: 11,
               padding: "2px 7px",
               borderRadius: 4,
@@ -10177,7 +10304,7 @@ ${email?.body || ""}`
               candidates.length
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { onClick: onClose, style: {
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("button", { onClick: onClose, style: {
             width: 24,
             height: 24,
             borderRadius: 4,
@@ -10187,10 +10314,10 @@ ${email?.body || ""}`
             alignItems: "center",
             justifyContent: "center",
             color: "#A1A1AA"
-          }, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(IconX, { size: 12 }) })
+          }, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(IconX, { size: 12 }) })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { padding: "24px 18px" }, children: loading ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { textAlign: "center", color: "#52525B", fontSize: 13, padding: "20px 0" }, children: "Loading\u2026" }) : done || candidates.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { textAlign: "center", padding: "20px 0" }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: {
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: { padding: "24px 18px" }, children: loading ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: { textAlign: "center", color: "#52525B", fontSize: 13, padding: "20px 0" }, children: "Loading\u2026" }) : done || candidates.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: { textAlign: "center", padding: "20px 0" }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: {
             width: 40,
             height: 40,
             borderRadius: 10,
@@ -10201,10 +10328,10 @@ ${email?.body || ""}`
             justifyContent: "center",
             color: "#22C55E",
             marginBottom: 14
-          }, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(IconCheck, { size: 18 }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { fontSize: 15, fontWeight: 600, color: "#E4E4E7", marginBottom: 6 }, children: deletedCount > 0 ? `Cleaned ${deletedCount} email${deletedCount === 1 ? "" : "s"}` : "Nothing to clean" }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { fontSize: 12, color: "#71717A", marginBottom: 20 }, children: candidates.length === 0 ? "Your inbox is already clean." : "All top senders reviewed." }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { onClick: onClose, style: {
+          }, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(IconCheck, { size: 18 }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: { fontSize: 15, fontWeight: 600, color: "#E4E4E7", marginBottom: 6 }, children: deletedCount > 0 ? `Cleaned ${deletedCount} email${deletedCount === 1 ? "" : "s"}` : "Nothing to clean" }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: { fontSize: 12, color: "#71717A", marginBottom: 20 }, children: candidates.length === 0 ? "Your inbox is already clean." : "All top senders reviewed." }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("button", { onClick: onClose, style: {
             padding: "7px 18px",
             borderRadius: 5,
             background: "#6366F1",
@@ -10213,20 +10340,20 @@ ${email?.body || ""}`
             fontSize: 13,
             fontWeight: 500
           }, children: "Done" })
-        ] }) : current ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_jsx_runtime12.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: {
+        ] }) : current ? /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_jsx_runtime13.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: {
             background: "#0E0E10",
             border: "1px solid #27272A",
             borderRadius: 8,
             padding: "16px",
             marginBottom: 20
           }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 12 }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { minWidth: 0, flex: 1 }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { fontSize: 14, fontWeight: 600, color: "#E4E4E7", marginBottom: 3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: current.sender_name || current.sender_email }),
-                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { fontSize: 12, color: "#71717A", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: current.sender_email })
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 12 }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: { minWidth: 0, flex: 1 }, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: { fontSize: 14, fontWeight: 600, color: "#E4E4E7", marginBottom: 3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: current.sender_name || current.sender_email }),
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: { fontSize: 12, color: "#71717A", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: current.sender_email })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { style: {
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { style: {
                 fontSize: 11,
                 fontWeight: 600,
                 padding: "3px 8px",
@@ -10242,7 +10369,7 @@ ${email?.body || ""}`
                 current.cnt === 1 ? "" : "s"
               ] })
             ] }),
-            current.latest_subject && /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: {
+            current.latest_subject && /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: {
               fontSize: 12,
               color: "#52525B",
               borderTop: "1px solid #27272A",
@@ -10255,8 +10382,8 @@ ${email?.body || ""}`
               current.latest_subject
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { display: "flex", gap: 10 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { onClick: handleDeleteAll, style: {
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: { display: "flex", gap: 10 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { onClick: handleDeleteAll, style: {
               flex: 1,
               display: "flex",
               alignItems: "center",
@@ -10270,12 +10397,12 @@ ${email?.body || ""}`
               fontSize: 13,
               fontWeight: 500
             }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(IconTrash, { size: 14 }),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(IconTrash, { size: 14 }),
               "Delete all (",
               current.cnt,
               ")"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { onClick: handleKeepAll, style: {
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { onClick: handleKeepAll, style: {
               flex: 1,
               display: "flex",
               alignItems: "center",
@@ -10289,20 +10416,20 @@ ${email?.body || ""}`
               fontSize: 13,
               fontWeight: 500
             }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(IconCheck, { size: 14 }),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(IconCheck, { size: 14 }),
               "Keep all"
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { marginTop: 16 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: 6 }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { style: { fontSize: 11, color: "#52525B" }, children: "Progress" }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { style: { fontSize: 11, color: "#52525B", fontVariantNumeric: "tabular-nums" }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: { marginTop: 16 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: 6 }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { style: { fontSize: 11, color: "#52525B" }, children: "Progress" }),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { style: { fontSize: 11, color: "#52525B", fontVariantNumeric: "tabular-nums" }, children: [
                 index + 1,
                 " / ",
                 candidates.length
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { height: 3, background: "#27272A", borderRadius: 2 }, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: {
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: { height: 3, background: "#27272A", borderRadius: 2 }, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: {
               height: "100%",
               borderRadius: 2,
               background: "#6366F1",
@@ -10316,7 +10443,7 @@ ${email?.body || ""}`
   }
 
   // src/renderer/App.jsx
-  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
   function formatDate3(ts) {
     if (!ts) return "";
     const d = new Date(ts);
@@ -10336,8 +10463,8 @@ ${email?.body || ""}`
         setLoading(false);
       }).catch(() => setLoading(false));
     }, [loader]);
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: { display: "flex", flexDirection: "column", height: "100%", minHeight: 0 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: {
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { style: { display: "flex", flexDirection: "column", height: "100%", minHeight: 0 }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { style: {
         padding: "10px 16px",
         borderBottom: "1px solid #27272A",
         background: "#18181B",
@@ -10347,8 +10474,8 @@ ${email?.body || ""}`
         alignItems: "center",
         gap: 12
       }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { style: { fontSize: 13, fontWeight: 600, color: "#E4E4E7" }, children: title }),
-        !loading && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { style: {
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { style: { fontSize: 13, fontWeight: 600, color: "#E4E4E7" }, children: title }),
+        !loading && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { style: {
           fontSize: 11,
           fontWeight: 500,
           padding: "2px 7px",
@@ -10358,8 +10485,8 @@ ${email?.body || ""}`
           fontVariantNumeric: "tabular-nums"
         }, children: emails.length })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: { flex: 1, overflowY: "auto", background: "#0E0E10" }, children: [
-        loading ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: { padding: "80px 24px", textAlign: "center", color: "#52525B", fontSize: 13 }, children: "Loading\u2026" }) : emails.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: { padding: "80px 24px", textAlign: "center", color: "#52525B", fontSize: 13 }, children: "No messages." }) : emails.map((e) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { onClick: () => setOpenEmailId(e.id), style: {
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { style: { flex: 1, overflowY: "auto", background: "#0E0E10" }, children: [
+        loading ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { style: { padding: "80px 24px", textAlign: "center", color: "#52525B", fontSize: 13 }, children: "Loading\u2026" }) : emails.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { style: { padding: "80px 24px", textAlign: "center", color: "#52525B", fontSize: 13 }, children: "No messages." }) : emails.map((e) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { onClick: () => setOpenEmailId(e.id), style: {
           display: "grid",
           gridTemplateColumns: "1fr auto",
           gap: 12,
@@ -10369,16 +10496,16 @@ ${email?.body || ""}`
           background: openEmailId === e.id ? "rgba(99,102,241,0.10)" : "transparent",
           cursor: "pointer"
         }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: { minWidth: 0 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: { display: "flex", alignItems: "baseline", gap: 10, marginBottom: 3 }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { style: { fontSize: 13, fontWeight: 600, color: "#E4E4E7", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }, children: e.sender_name || e.sender_email }),
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { style: { fontSize: 12, color: "#A1A1AA", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", flex: 1 }, children: e.subject })
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { style: { minWidth: 0 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { style: { display: "flex", alignItems: "baseline", gap: 10, marginBottom: 3 }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { style: { fontSize: 13, fontWeight: 600, color: "#E4E4E7", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }, children: e.sender_name || e.sender_email }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { style: { fontSize: 12, color: "#A1A1AA", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", flex: 1 }, children: e.subject })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: { fontSize: 12, color: "#52525B", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }, children: e.body?.slice(0, 120) || "" })
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { style: { fontSize: 12, color: "#52525B", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }, children: e.body?.slice(0, 120) || "" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { style: { fontSize: 12, color: "#71717A", whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums", alignSelf: "center" }, children: formatDate3(e.date) })
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { style: { fontSize: 12, color: "#71717A", whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums", alignSelf: "center" }, children: formatDate3(e.date) })
         ] }, e.id)),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: { height: 60 } })
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { style: { height: 60 } })
       ] })
     ] });
   }
@@ -10499,16 +10626,16 @@ ${email?.body || ""}`
       setPhase("onboarding");
     };
     if (phase === "loading") {
-      return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: { height: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#0E0E10", color: "#52525B" }, children: "Loading\u2026" });
+      return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { style: { height: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#0E0E10", color: "#52525B" }, children: "Loading\u2026" });
     }
     if (phase === "onboarding") {
-      return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(OnboardingScreen, { onComplete: handleOnboardingComplete });
+      return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(OnboardingScreen, { onComplete: handleOnboardingComplete });
     }
     const searchActive = activeNav === "inbox" && searchQuery !== "";
     const showSearch = searchActive;
     const showTriage = activeNav === "inbox" && !searchActive;
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: { display: "flex", height: "100vh", background: "#0E0E10" }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { style: { display: "flex", height: "100vh", background: "#0E0E10" }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
         Sidebar,
         {
           accounts,
@@ -10526,14 +10653,14 @@ ${email?.body || ""}`
           onQuickClean: () => setQuickCleanOpen(true)
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("main", { style: { flex: 1, position: "relative", display: "flex", flexDirection: "column", minWidth: 0, minHeight: 0 }, children: [
-        snoozeOpenId && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { onClick: () => setSnoozeOpenId(null), style: {
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("main", { style: { flex: 1, position: "relative", display: "flex", flexDirection: "column", minWidth: 0, minHeight: 0 }, children: [
+        snoozeOpenId && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { onClick: () => setSnoozeOpenId(null), style: {
           position: "absolute",
           inset: 0,
           zIndex: 15,
           background: "transparent"
         } }),
-        showTriage && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+        showTriage && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
           TriageScreen,
           {
             accounts,
@@ -10553,7 +10680,7 @@ ${email?.body || ""}`
             }
           }
         ),
-        showSearch && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+        showSearch && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
           SearchResultsScreen,
           {
             query: searchQuery.trim(),
@@ -10566,7 +10693,7 @@ ${email?.body || ""}`
             }
           }
         ),
-        activeNav === "starred" && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+        activeNav === "starred" && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
           EmailListScreen,
           {
             title: "Starred",
@@ -10578,7 +10705,7 @@ ${email?.body || ""}`
             }
           }
         ),
-        activeNav === "sent" && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+        activeNav === "sent" && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
           EmailListScreen,
           {
             title: "Sent",
@@ -10590,7 +10717,7 @@ ${email?.body || ""}`
             }
           }
         ),
-        activeNav === "archived" && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+        activeNav === "archived" && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
           EmailListScreen,
           {
             title: "Archive",
@@ -10602,8 +10729,8 @@ ${email?.body || ""}`
             }
           }
         ),
-        activeNav === "settings" && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(SettingsScreen, { onAddAccount: handleAddAccount }),
-        openEmailId && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+        activeNav === "settings" && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SettingsScreen, { onAddAccount: handleAddAccount }),
+        openEmailId && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
           ReadingPane,
           {
             emailId: openEmailId,
@@ -10618,7 +10745,7 @@ ${email?.body || ""}`
           }
         )
       ] }),
-      composeOpen && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+      composeOpen && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
         ComposeModal,
         {
           onClose: () => setComposeOpen(false),
@@ -10626,14 +10753,14 @@ ${email?.body || ""}`
           templates
         }
       ),
-      quickCleanOpen && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(QuickCleanModal, { onClose: () => setQuickCleanOpen(false) })
+      quickCleanOpen && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(QuickCleanModal, { onClose: () => setQuickCleanOpen(false) })
     ] });
   }
 
   // src/renderer/index.jsx
-  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
   var root = (0, import_client.createRoot)(document.getElementById("root"));
-  root.render(/* @__PURE__ */ (0, import_jsx_runtime14.jsx)(App, {}));
+  root.render(/* @__PURE__ */ (0, import_jsx_runtime15.jsx)(App, {}));
 })();
 /*! Bundled license information:
 
